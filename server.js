@@ -30,10 +30,19 @@ app.get("/test", (req, res) => {
   });
 });
 
-app.post("/webhook", (req, res) => {
-  console.log("Webhook Received:");
-  console.log(JSON.stringify(req.body, null, 2));
-  res.sendStatus(200);
+app.get("/webhook", (req, res) => {
+  console.log("Webhook Verification Request");
+  console.log(req.query);
+
+  const mode = req.query["hub.mode"];
+  const token = req.query["hub.verify_token"];
+  const challenge = req.query["hub.challenge"];
+
+  if (mode === "subscribe" && token === process.env.VERIFY_TOKEN) {
+    return res.status(200).send(challenge);
+  }
+
+  return res.status(403).send("Forbidden");
 });
 
 const PORT = process.env.PORT || 3000;
