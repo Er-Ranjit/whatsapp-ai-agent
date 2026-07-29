@@ -2,14 +2,17 @@ const express = require("express");
 const bodyParser = require("body-parser");
 require("dotenv").config();
 
-const app = express();
+const { generateReply } = require("./services/openaiService");
+const { sendWhatsAppMessage } = require("./services/whatsappService");
 
+const app = express();
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
   res.send("WhatsApp AI Bot Running...");
 });
 
+// Webhook Verification
 app.get("/webhook", (req, res) => {
   const mode = req.query["hub.mode"];
   const token = req.query["hub.verify_token"];
@@ -23,30 +26,35 @@ app.get("/webhook", (req, res) => {
   return res.sendStatus(403);
 });
 
-app.get("/test", (req, res) => {
-  res.json({
-    verifyToken: process.env.VERIFY_TOKEN,
-    port: process.env.PORT
-  });
-});
+// Incoming Messages
+app.post("/webhook", async (req, res) => {
+  try {
+    const entry = req.body.entry?.[0];
+    const change = entry?.changes?.[0];
+    const value = change?.value;
 
-app.get("/webhook", (req, res) => {
-  console.log("Webhook Verification Request");
-  console.log(req.query);
+    if (value?.messages) {
+      const message = value.messages[0];
+      const from = message.from;
+      const text = message.text?.body;
 
-  const mode = req.query["hub.mode"];
-  const token = req.query["hub.verify_token"];
-  const challenge = req.query["hub.challenge"];
+      console.log("Message:", text);
 
-  if (mode === "subscribe" && token === process.env.VERIFY_TOKEN) {
-    return res.status(200).send(challenge);
+      if (text) {
+        const aiReply = await generateReply(text);
+        await sendWhatsAppMessage(from, aiReply);
+      }
+    }
+
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
   }
-
-  return res.status(403).send("Forbidden");
 });
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
