@@ -28,6 +28,8 @@ app.get("/webhook", (req, res) => {
 
 // Incoming Messages
 app.post("/webhook", async (req, res) => {
+   console.log("===== WEBHOOK HIT =====");
+  console.log(JSON.stringify(req.body, null, 2));
   try {
     const entry = req.body.entry?.[0];
     const change = entry?.changes?.[0];
@@ -52,6 +54,8 @@ app.post("/webhook", async (req, res) => {
     res.sendStatus(500);
   }
 });
+
+
 
 const PORT = process.env.PORT || 3000;
 
