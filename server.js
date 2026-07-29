@@ -23,6 +23,13 @@ app.get("/webhook", (req, res) => {
   return res.sendStatus(403);
 });
 
+app.get("/test", (req, res) => {
+  res.json({
+    verifyToken: process.env.VERIFY_TOKEN,
+    port: process.env.PORT
+  });
+});
+
 app.post("/webhook", (req, res) => {
   console.log("Webhook Received:");
   console.log(JSON.stringify(req.body, null, 2));
