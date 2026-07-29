@@ -11,7 +11,8 @@ async function generateReply(userMessage) {
       messages: [
         {
           role: "system",
-          content: "You are a helpful WhatsApp AI assistant. Reply in Hindi or English based on the user's language. Keep replies short and friendly."
+          content:
+            "You are a friendly WhatsApp AI Assistant. Reply briefly in Hindi or English according to the user's language."
         },
         {
           role: "user",
@@ -21,9 +22,11 @@ async function generateReply(userMessage) {
     });
 
     return response.choices[0].message.content;
+
   } catch (error) {
     console.error("OpenAI Error:", error.message);
-    return "Sorry, I'm having trouble replying right now.";
+
+    return "🙏 Hello! AI service is temporarily unavailable.";
   }
 }
 
