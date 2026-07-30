@@ -2,7 +2,7 @@ const axios = require("axios");
 
 async function sendWhatsAppMessage(to, message) {
   try {
-    // 🌟 Ekdum Sahi Aur Fixed URL
+    // 🌟 EXACT META URL (Isme se ek bhi word misplace nahi hona chahiye)
     const url = "https://facebook.com";
 
     console.log("🔗 Real Final URL Built:", url); 
