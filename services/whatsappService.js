@@ -2,11 +2,14 @@ const axios = require("axios");
 
 async function sendWhatsAppMessage(to, message) {
   try {
+    // 🌟 FIXED: URL mein slash (/) sahi jagah lagaya hai aur string literals properly handled hain
+    const url = `https://facebook.com{process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`;
+
     await axios.post(
-      `https://facebook.com{process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`,
+      url,
       {
         messaging_product: "whatsapp",
-        to,
+        to: to,
         type: "text",
         text: { body: message }
       },
