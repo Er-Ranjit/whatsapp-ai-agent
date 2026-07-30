@@ -1,32 +1,22 @@
-const OpenAI = require("openai");
+const { GoogleGenAI } = require("@google/genai");
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
 });
 
 async function generateReply(userMessage) {
   try {
-    const response = await client.chat.completions.create({
-      model: "gpt-4.1-mini",
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a friendly WhatsApp AI Assistant. Reply briefly in Hindi or English according to the user's language."
-        },
-        {
-          role: "user",
-          content: userMessage
-        }
-      ]
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: `You are a friendly WhatsApp AI Assistant. Reply briefly in Hindi or English according to the user's language.
+
+User: ${userMessage}`,
     });
 
-    return response.choices[0].message.content;
-
+    return response.text;
   } catch (error) {
-    console.error("OpenAI Error:", error.message);
-
-    return "🙏 Hello! AI service is temporarily unavailable.";
+    console.error("Gemini Error:", error.message);
+    return "🙏 Sorry! AI service is temporarily unavailable.";
   }
 }
 
