@@ -7,7 +7,7 @@ async function generateReply(userMessage) {
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-        model: "openai/gpt-4.1-mini",
+        model: "meta-llama/llama-3.3-8b-instruct:free",
         messages: [
           {
             role: "system",
