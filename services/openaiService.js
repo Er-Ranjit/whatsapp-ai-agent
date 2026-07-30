@@ -7,12 +7,12 @@ async function generateReply(userMessage) {
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-        model: "meta-llama/llama-3.3-8b-instruct:free",
+        model: "openai/gpt-4.1-mini",
         messages: [
           {
             role: "system",
             content:
-              "You are a friendly WhatsApp AI assistant. Reply in the same language as the user. Keep answers short."
+              "You are a friendly WhatsApp AI Assistant. Reply in the same language as the user. Keep replies short."
           },
           {
             role: "user",
@@ -24,7 +24,7 @@ async function generateReply(userMessage) {
         headers: {
           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
-          "HTTP-Referer": "https://whatsapp-ai-agent.onrender.com",
+          "HTTP-Referer": "https://whatsapp-ai-agent-wrxm.onrender.com",
           "X-Title": "WhatsApp AI Bot"
         }
       }
@@ -32,14 +32,24 @@ async function generateReply(userMessage) {
 
     const reply = response.data.choices[0].message.content;
 
-    console.log("🤖 AI:", reply);
+    console.log("🤖 AI Reply:", reply);
 
     return reply;
 
   } catch (err) {
-    console.log(err.response?.data || err.message);
+
+    console.log("===== OPENROUTER ERROR =====");
+
+    if (err.response) {
+      console.log(JSON.stringify(err.response.data, null, 2));
+    } else {
+      console.log(err.message);
+    }
+
     return "Sorry, AI is unavailable.";
   }
 }
 
-module.exports = { generateReply };
+module.exports = {
+  generateReply
+};
