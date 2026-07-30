@@ -10,63 +10,66 @@ const app = express();
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
-  res.send("🤖 WhatsApp Gemini AI Bot Running...");
+    res.send("WhatsApp AI Bot Running...");
 });
 
-// Webhook Verification
 app.get("/webhook", (req, res) => {
-  const mode = req.query["hub.mode"];
-  const token = req.query["hub.verify_token"];
-  const challenge = req.query["hub.challenge"];
 
-  if (mode === "subscribe" && token === process.env.VERIFY_TOKEN) {
-    console.log("✅ Webhook Verified");
-    return res.status(200).send(challenge);
-  }
+    const mode = req.query["hub.mode"];
+    const token = req.query["hub.verify_token"];
+    const challenge = req.query["hub.challenge"];
 
-  return res.sendStatus(403);
-});
+    if (mode === "subscribe" && token === process.env.VERIFY_TOKEN) {
 
-// Incoming Messages
-app.post("/webhook", async (req, res) => {
-  console.log("===== WEBHOOK HIT =====");
-  console.log(JSON.stringify(req.body, null, 2));
+        console.log("Webhook Verified");
 
-  try {
-    const entry = req.body.entry?.[0];
-    const change = entry?.changes?.[0];
-    const value = change?.value;
+        return res.status(200).send(challenge);
 
-    if (value?.messages) {
-      const message = value.messages[0];
-
-      if (message.type !== "text") {
-        return res.sendStatus(200);
-      }
-
-      const from = message.from;
-      const text = message.text.body;
-
-      console.log("👤 From:", from);
-      console.log("💬 Message:", text);
-
-      const reply = await generateReply(text);
-
-      console.log("🤖 Reply:", reply);
-
-      await sendWhatsAppMessage(from, reply);
     }
 
-    res.sendStatus(200);
+    res.sendStatus(403);
 
-  } catch (err) {
-    console.error("Webhook Error:", err.message);
-    res.sendStatus(500);
-  }
+});
+
+app.post("/webhook", async (req, res) => {
+
+    try {
+
+        console.log(JSON.stringify(req.body, null, 2));
+
+        const message =
+            req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
+
+        if (!message || message.type !== "text") {
+            return res.sendStatus(200);
+        }
+
+        const from = message.from;
+        const text = message.text.body;
+
+        console.log("From:", from);
+        console.log("Message:", text);
+
+        const reply = await generateReply(text);
+
+        await sendWhatsAppMessage(from, reply);
+
+        res.sendStatus(200);
+
+    } catch (err) {
+
+        console.log(err);
+
+        res.sendStatus(500);
+
+    }
+
 });
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+
+    console.log("🚀 Server running on port", PORT);
+
 });
