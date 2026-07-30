@@ -2,12 +2,10 @@ const axios = require("axios");
 
 async function sendWhatsAppMessage(to, message) {
   try {
-    const id = process.env.WHATSAPP_PHONE_NUMBER_ID;
-    
-    // 🌟 FULL PROOF URL STRING: Base URL ke baad strictly manual slash lagaya hai
-    const url = "https://facebook.com" + id + "/messages";
+    // 🌟 Ekdum Sahi Aur Fixed URL
+    const url = "https://facebook.com";
 
-    console.log("🔗 Sending Request To URL:", url); // Isse hume sahi URL logs me dikhega
+    console.log("🔗 Real Final URL Built:", url); 
 
     await axios.post(
       url,
