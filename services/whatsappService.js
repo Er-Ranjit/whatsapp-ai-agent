@@ -1,36 +1,48 @@
 const axios = require("axios");
 
 async function sendWhatsAppMessage(to, message) {
-  try {
-    // 🌟 EXACT META URL (Isme se ek bhi word misplace nahi hona chahiye)
-    const url = "https://facebook.com";
 
-    console.log("🔗 Real Final URL Built:", url); 
+  try {
+
+    const url =
+      `https://graph.facebook.com/v25.0/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`;
+
+    console.log("🔗 URL:", url);
 
     await axios.post(
       url,
       {
         messaging_product: "whatsapp",
-        to: to,
+        to,
         type: "text",
-        text: { body: message }
+        text: {
+          body: message
+        }
       },
       {
         headers: {
-          Authorization: "Bearer " + process.env.WHATSAPP_ACCESS_TOKEN,
+          Authorization: `Bearer ${process.env.WHATSAPP_ACCESS_TOKEN}`,
           "Content-Type": "application/json"
         }
       }
     );
-    console.log("✅ WhatsApp Reply Sent successfully!");
+
+    console.log("✅ WhatsApp Reply Sent");
+
   } catch (err) {
-    console.log("❌ WHATSAPP SEND ERROR DETAILS:");
+
+    console.log("===== WHATSAPP ERROR =====");
+
     if (err.response) {
       console.log(JSON.stringify(err.response.data, null, 2));
     } else {
       console.log(err.message);
     }
+
   }
+
 }
 
-module.exports = { sendWhatsAppMessage };
+module.exports = {
+  sendWhatsAppMessage
+};
