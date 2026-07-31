@@ -7,7 +7,8 @@ async function generateReply(userMessage) {
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-        model: "openai/gpt-4.1-mini",
+        model: "openai/gpt-oss-20b:free",
+        max_tokens: 200,
         messages: [
           {
             role: "system",
@@ -31,7 +32,8 @@ async function generateReply(userMessage) {
     );
 
     const reply =
-      response.data.choices[0].message.content;
+      response.data?.choices?.[0]?.message?.content ||
+      "Sorry, I couldn't process that.";
 
     console.log("🤖 AI Reply:", reply);
 

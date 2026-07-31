@@ -1,11 +1,9 @@
 const axios = require("axios");
 
 async function sendWhatsAppMessage(to, message) {
-
   try {
 
-    const url =
-      `https://graph.facebook.com/v25.0/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`;
+    const url = `https://graph.facebook.com/v25.0/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`;
 
     console.log("🔗 URL:", url);
 
@@ -40,7 +38,6 @@ async function sendWhatsAppMessage(to, message) {
     }
 
   }
-
 }
 
 module.exports = {
